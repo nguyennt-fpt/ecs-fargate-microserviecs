@@ -1,0 +1,12 @@
+node_modules
+Dockerfile
+.dockerignore
+.git
+.gitignore
+README.md
+buildspec*.yml
+Docker-compose*.yml
+spec
+.vscode
+.idea
+*.log

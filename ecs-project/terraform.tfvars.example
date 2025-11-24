@@ -1,0 +1,68 @@
+aws_region   = "ap-southeast-1"
+project_name = "ecs-fargate-microservices"
+
+vpc_cidr                  = "10.10.0.0/16"
+public_subnet_cidrs       = ["10.10.1.0/24", "10.10.2.0/24"]
+private_subnet_ecs_cidrs  = ["10.10.3.0/24", "10.10.4.0/24"]
+private_subnet_rds_cidrs  = ["10.10.5.0/24", "10.10.6.0/24"]
+
+listener_port     = 80
+listener_protocol = "HTTP"
+
+container_name    = "web-app"
+container_image   = "YOUR_ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/YOUR_IMAGE:latest"
+app_port          = 3000
+health_check_path = "/"
+
+task_cpu    = "256"
+task_memory = "512"
+
+desired_count = 2
+
+min_capacity                  = 2
+max_capacity                  = 4
+target_cpu_utilization        = 70
+target_memory_utilization     = 80
+
+log_retention_days        = 5
+enable_container_insights = true
+environment_variables = []
+secrets = []
+
+enable_rds                     = true
+db_identifier                  = "mydb"
+db_engine                      = "mysql"
+db_engine_version              = "8.0.43"
+db_instance_class              = "db.t3.micro"
+db_allocated_storage           = 20
+db_max_allocated_storage       = 100
+db_name                        = "myapp"
+db_username                    = "admin"
+db_port                        = 3306
+db_multi_az                    = true
+db_storage_encrypted           = true
+db_backup_retention_period     = 7
+enable_secrets_manager         = true
+
+enable_waf     = true
+waf_rate_limit = 1000
+
+enable_elasticache                 = false
+elasticache_engine                 = "redis"
+elasticache_version                = "7.0"
+elasticache_node_type              = "cache.t3.micro"
+elasticache_num_cache_nodes        = 1
+elasticache_port                   = 6379
+elasticache_parameter_group_family = "redis7"
+elasticache_multi_az               = false
+elasticache_automatic_failover     = false
+elasticache_at_rest_encryption     = true
+elasticache_transit_encryption     = true
+#elasticache_parameters             = {}
+
+# Security Monitoring
+enable_guardduty         = true
+enable_vpc_flow_logs     = true
+flow_log_retention_days  = 14
+security_alert_email     = "your-email@example.com"
+enable_s3_monitoring      = false
