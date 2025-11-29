@@ -16,11 +16,13 @@ provider "aws" {
 module "vpc" {
   source = "./modules/vpc"
 
-  project_name              = var.project_name
-  vpc_cidr                  = var.vpc_cidr
-  public_subnet_cidrs       = var.public_subnet_cidrs
-  private_subnet_ecs_cidrs  = var.private_subnet_ecs_cidrs
-  private_subnet_rds_cidrs  = var.private_subnet_rds_cidrs
+  aws_region                      = var.aws_region
+  project_name                    = var.project_name
+  vpc_cidr                        = var.vpc_cidr
+  public_subnet_cidrs             = var.public_subnet_cidrs
+  private_subnet_ecs_cidrs        = var.private_subnet_ecs_cidrs
+  private_subnet_rds_cidrs        = var.private_subnet_rds_cidrs
+  vpc_endpoint_security_group_id  = module.security.vpc_endpoint_security_group_id
 }
 
 # IAM Module
@@ -36,12 +38,12 @@ module "iam" {
 module "security" {
   source = "./modules/security"
 
-  project_name         = var.project_name
-  vpc_id               = module.vpc.vpc_id
-  enable_rds           = var.enable_rds
-  rds_port             = var.db_port
-  enable_elasticache   = var.enable_elasticache
-  elasticache_port     = var.elasticache_port
+  project_name = var.project_name
+  vpc_id       = module.vpc.vpc_id
+  vpc_cidr     = var.vpc_cidr
+  enable_rds   = var.enable_rds
+  rds_port     = var.db_port
+  app_port     = var.app_port
 }
 
 # ALB Module
@@ -155,26 +157,7 @@ module "waf" {
   count = var.enable_waf ? 1 : 0
 }
 
-# ElastiCache Module
-module "elasticache" {
-  source = "./modules/elasticache"
 
-  enable_elasticache         = var.enable_elasticache
-  project_name               = var.project_name
-  engine                     = var.elasticache_engine
-  engine_version             = var.elasticache_version
-  node_type                  = var.elasticache_node_type
-  num_cache_nodes            = var.elasticache_num_cache_nodes
-  port                       = var.elasticache_port
-  parameter_group_family     = var.elasticache_parameter_group_family
-  elasticache_subnet_ids     = module.vpc.private_ecs_subnet_ids
-  security_group_id          = module.security.elasticache_security_group_id
-  multi_az_enabled           = var.elasticache_multi_az
-  automatic_failover_enabled = var.elasticache_automatic_failover
-  at_rest_encryption_enabled = var.elasticache_at_rest_encryption
-  transit_encryption_enabled = var.elasticache_transit_encryption
-  parameters                 = var.elasticache_parameters
-}
 
 # Security Monitoring Module
 module "security_monitoring" {

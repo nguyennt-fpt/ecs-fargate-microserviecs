@@ -256,78 +256,7 @@ variable "waf_rate_limit" {
   default     = 2000
 }
 
-# ElastiCache Configuration
-variable "enable_elasticache" {
-  description = "Enable ElastiCache cluster"
-  type        = bool
-  default     = false
-}
 
-variable "elasticache_engine" {
-  description = "Cache engine (redis or memcached)"
-  type        = string
-  default     = "redis"
-}
-
-variable "elasticache_version" {
-  description = "Cache engine version"
-  type        = string
-  default     = "7.0"
-}
-
-variable "elasticache_node_type" {
-  description = "Cache node type"
-  type        = string
-  default     = "cache.t3.micro"
-}
-
-variable "elasticache_num_cache_nodes" {
-  description = "Number of cache nodes"
-  type        = number
-  default     = 1
-}
-
-variable "elasticache_port" {
-  description = "Cache port"
-  type        = number
-  default     = 6379
-}
-
-variable "elasticache_parameter_group_family" {
-  description = "Parameter group family"
-  type        = string
-  default     = "redis7"
-}
-
-variable "elasticache_multi_az" {
-  description = "Enable Multi-AZ for cache"
-  type        = bool
-  default     = false
-}
-
-variable "elasticache_automatic_failover" {
-  description = "Enable automatic failover"
-  type        = bool
-  default     = false
-}
-
-variable "elasticache_at_rest_encryption" {
-  description = "Enable encryption at rest"
-  type        = bool
-  default     = true
-}
-
-variable "elasticache_transit_encryption" {
-  description = "Enable transit encryption"
-  type        = bool
-  default     = true
-}
-
-variable "elasticache_parameters" {
-  description = "ElastiCache parameter group parameters"
-  type        = map(string)
-  default     = {}
-}
 
 variable "db_storage_type" {
   description = "Database storage type"

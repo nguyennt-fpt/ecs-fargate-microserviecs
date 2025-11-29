@@ -23,10 +23,7 @@ output "private_rds_subnet_ids" {
   value       = aws_subnet.private_rds[*].id
 }
 
-output "nat_gateway_id" {
-  description = "NAT Gateway ID"
-  value       = aws_nat_gateway.main.id
-}
+
 
 output "internet_gateway_id" {
   description = "Internet Gateway ID"

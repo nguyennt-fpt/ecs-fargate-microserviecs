@@ -13,7 +13,9 @@ output "rds_security_group_id" {
   value       = try(aws_security_group.rds[0].id, null)
 }
 
-output "elasticache_security_group_id" {
-  description = "ElastiCache security group ID"
-  value       = try(aws_security_group.elasticache[0].id, null)
+output "vpc_endpoint_security_group_id" {
+  description = "VPC endpoint security group ID"
+  value       = aws_security_group.vpc_endpoint.id
 }
+
+

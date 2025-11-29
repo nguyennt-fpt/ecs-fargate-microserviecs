@@ -47,18 +47,7 @@ enable_secrets_manager         = true
 enable_waf     = true
 waf_rate_limit = 1000
 
-enable_elasticache                 = false
-elasticache_engine                 = "redis"
-elasticache_version                = "7.0"
-elasticache_node_type              = "cache.t3.micro"
-elasticache_num_cache_nodes        = 1
-elasticache_port                   = 6379
-elasticache_parameter_group_family = "redis7"
-elasticache_multi_az               = false
-elasticache_automatic_failover     = false
-elasticache_at_rest_encryption     = true
-elasticache_transit_encryption     = true
-#elasticache_parameters             = {}
+
 
 # Security Monitoring
 enable_guardduty         = true

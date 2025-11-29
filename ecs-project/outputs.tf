@@ -50,15 +50,7 @@ output "rds_address" {
   sensitive   = true
 }
 
-output "elasticache_endpoint" {
-  description = "ElastiCache endpoint"
-  value       = try(module.elasticache.elasticache_endpoint, "ElastiCache not enabled")
-}
 
-output "elasticache_port" {
-  description = "ElastiCache port"
-  value       = try(module.elasticache.elasticache_port, "ElastiCache not enabled")
-}
 
 output "rds_secret_arn" {
   description = "RDS secret ARN from AWS Secrets Manager"

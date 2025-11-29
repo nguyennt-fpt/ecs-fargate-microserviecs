@@ -7,6 +7,7 @@ This project provides infrastructure as code (IaC) to deploy microservices appli
 ### ECS Project
 - **ECS Fargate**: Container orchestration with auto scaling
 - **Application Load Balancer**: Load balancing and health checks
+- **VPC Endpoints**: Private connectivity to AWS services (ECR, Secrets Manager, S3, CloudWatch)
 - **RDS MySQL**: Managed database with encryption
 - **ElastiCache Redis**: In-memory caching (optional)
 - **AWS WAF**: Web application firewall
@@ -26,9 +27,14 @@ Terraform/
 │   ├── modules/                 # Terraform modules
 │   │   ├── alb/                # Application Load Balancer
 │   │   ├── ecs/                # ECS Fargate cluster & service
+│   │   ├── ecr-endpoint/       # VPC Endpoints for ECR, S3, Secrets Manager
+│   │   ├── iam/                # IAM roles and policies
 │   │   ├── rds/                # RDS MySQL database
-│   │   ├── vpc/                # VPC, subnets, security groups
+│   │   ├── security/           # Security groups
+│   │   ├── vpc/                # VPC, subnets (no NAT Gateway)
 │   │   ├── waf/                # AWS WAF protection
+│   │   ├── elasticache/        # ElastiCache Redis (optional)
+│   │   ├── secrets/            # Secrets Manager
 │   │   └── security-monitoring/ # GuardDuty, VPC Flow Logs
 │   ├── main.tf                 # Main configuration
 │   ├── variables.tf            # Input variables
@@ -61,6 +67,7 @@ brew install terraform
 ```
 
 3. **Docker** (for local development)
+4. **ECR Repository** created for your container images
 
 ### Deploy Infrastructure
 
@@ -82,6 +89,14 @@ aws_region = "ap-southeast-1"
 project_name = "your-project-name"
 container_image = "YOUR_ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/YOUR_IMAGE:latest"
 security_alert_email = "your-email@example.com"
+
+# Database settings
+enable_rds = true
+enable_secrets_manager = true
+
+# Optional features
+enable_elasticache = false
+enable_waf = true
 ```
 
 4. **Initialize Terraform**
@@ -118,11 +133,24 @@ docker push YOUR_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/your-repo:lates
 
 ## ⚙️ Configuration
 
+### VPC Endpoints (Cost Optimization)
+
+```hcl
+# VPC Endpoints replace NAT Gateway
+# Automatically created:
+# - ECR API endpoint
+# - ECR DKR endpoint  
+# - S3 Gateway endpoint
+# - Secrets Manager endpoint
+# - CloudWatch Logs endpoint (optional)
+```
+
 ### Optional Features
 
 ```hcl
 # Database
 enable_rds = true
+enable_secrets_manager = true
 
 # Caching
 enable_elasticache = false
@@ -131,9 +159,6 @@ enable_elasticache = false
 enable_waf = true
 enable_guardduty = true
 enable_vpc_flow_logs = true
-
-# Secrets Management
-enable_secrets_manager = true
 ```
 
 ### Auto Scaling
@@ -148,19 +173,22 @@ target_memory_utilization = 80
 
 ## 🔒 Security
 
+- **VPC Endpoints**: Private connectivity, no internet access for containers
 - **Encryption**: RDS and ElastiCache are encrypted
 - **Secrets Manager**: Secure credential management
 - **WAF**: Protection against web attacks
 - **GuardDuty**: Threat detection
 - **VPC Flow Logs**: Network traffic monitoring
 - **Security Groups**: Network access control
+- **No NAT Gateway**: Enhanced security and cost savings
 
 ## 📊 Monitoring
 
-- **CloudWatch Logs**: Application and container logs
+- **CloudWatch Logs**: Application and container logs (via VPC endpoint)
 - **Container Insights**: ECS metrics
 - **GuardDuty**: Security monitoring
 - **SNS Alerts**: Email notifications for security events
+- **VPC Flow Logs**: Network traffic analysis
 
 ## 🧹 Cleanup
 
@@ -171,9 +199,12 @@ terraform destroy
 
 ## 📝 Important Notes
 
+- **Cost Savings**: No NAT Gateway (~$45/month savings)
+- **Enhanced Security**: Containers have no internet access
 - `terraform.tfvars` contains sensitive information, do not commit to Git
 - Use `terraform.tfvars.example` as template
-- Check AWS costs before production deployment
+- ECR repository must exist before deployment
+- VPC endpoints provide private connectivity to AWS services
 - Backup terraform state file regularly
 
 ## 🆘 Troubleshooting
@@ -185,11 +216,20 @@ terraform destroy
 aws ecr create-repository --repository-name your-repo-name
 ```
 
-2. **Insufficient permissions**
-- Check IAM permissions for Terraform
-- Ensure permissions to create VPC, ECS, RDS, etc.
+2. **Container cannot pull image**
+- Ensure VPC endpoints are created
+- Check security groups allow port 443
+- Verify IAM roles have ECR permissions
 
-3. **Resource limits**
+3. **Secrets Manager connection issues**
+- Ensure Secrets Manager VPC endpoint exists
+- Check private DNS is enabled on endpoints
+
+4. **Insufficient permissions**
+- Check IAM permissions for Terraform
+- Ensure permissions to create VPC endpoints, ECS, RDS, etc.
+
+5. **Resource limits**
 - Check service quotas in AWS console
 - Request limit increases if needed
 

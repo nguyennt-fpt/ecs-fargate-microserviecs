@@ -8,6 +8,13 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "vpc_cidr" {
+  description = "VPC CIDR block"
+  type        = string
+}
+
+
+
 variable "enable_rds" {
   description = "Enable RDS security group"
   type        = bool
@@ -20,17 +27,7 @@ variable "rds_port" {
   default     = 5432
 }
 
-variable "enable_elasticache" {
-  description = "Enable ElastiCache security group"
-  type        = bool
-  default     = false
-}
 
-variable "elasticache_port" {
-  description = "ElastiCache port"
-  type        = number
-  default     = 6379
-}
 
 variable "app_port" {
   description = "Application port"

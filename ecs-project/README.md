@@ -13,7 +13,7 @@ This Terraform project deploys a complete ECS (Elastic Container Service) applic
 
 ### Optional Components
 - **RDS**: Relational database (PostgreSQL, MySQL, MariaDB, etc.)
-- **ElastiCache**: Distributed cache (Redis or Memcached)
+
 
 ## Project Structure
 
@@ -52,10 +52,7 @@ ecs-project/
     │   ├── main.tf
     │   ├── variables.tf
     │   └── outputs.tf
-    └── elasticache/        # ElastiCache cluster (optional)
-        ├── main.tf
-        ├── variables.tf
-        └── outputs.tf
+
 ```
 
 ## Prerequisites
@@ -176,15 +173,7 @@ db_storage_encrypted      = true
 enable_secrets_manager    = false  # Set to true for production
 ```
 
-### Enable ElastiCache
 
-```hcl
-enable_elasticache       = true
-elasticache_engine       = "redis"
-elasticache_node_type    = "cache.t3.micro"
-elasticache_multi_az     = true
-elasticache_automatic_failover = true
-```
 
 ## Module Details
 
@@ -205,11 +194,11 @@ Creates:
 - ALB security group (HTTP/HTTPS)
 - ECS tasks security group
 - RDS security group (optional)
-- ElastiCache security group (optional)
+
 
 **Variables:**
 - `enable_rds`
-- `enable_elasticache`
+
 
 ### ALB Module (`modules/alb/`)
 Creates:
@@ -247,14 +236,7 @@ Creates:
 **To Enable:**
 Set `enable_rds = true` in terraform.tfvars
 
-### ElastiCache Module (`modules/elasticache/`)
-Creates:
-- ElastiCache cluster (Redis or Memcached)
-- Parameter group
-- Subnet group
 
-**To Enable:**
-Set `enable_elasticache = true` in terraform.tfvars
 
 ## Common Tasks
 
@@ -287,10 +269,7 @@ environment_variables = [
     name  = "DATABASE_URL"
     value = "postgresql://..."
   },
-  {
-    name  = "CACHE_URL"
-    value = "redis://..."
-  }
+
 ]
 ```
 
@@ -317,7 +296,7 @@ After applying, useful outputs include:
 alb_dns_name          # URL to access your app
 ecs_cluster_name      # ECS cluster name
 rds_address           # RDS database address
-elasticache_endpoint  # ElastiCache endpoint
+
 ```
 
 ## Cleanup
@@ -348,8 +327,7 @@ terraform destroy
    ```hcl
    db_multi_az              = true
    db_deletion_protection   = true
-   elasticache_multi_az     = true
-   elasticache_automatic_failover = true
+
    ```
 
 4. **Monitoring**: Enable CloudWatch and Container Insights
@@ -374,9 +352,7 @@ Ensure your container responds with HTTP 200 on `health_check_path`
 - Check RDS is in same VPC
 - Verify credentials in environment variables or Secrets Manager
 
-### ElastiCache Connection Issues
-- Verify security group allows cache port
-- Check encryption settings if using auth token
+
 
 ## Additional Resources
 
