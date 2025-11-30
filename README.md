@@ -1,6 +1,6 @@
 # AWS ECS Fargate Microservices Infrastructure
 
-This project provides infrastructure as code (IaC) to deploy microservices applications on AWS ECS Fargate with supporting services like RDS, ElastiCache, WAF, and monitoring.
+This project provides infrastructure as code (IaC) to deploy microservices applications on AWS ECS Fargate with supporting services like RDS, WAF, and monitoring.
 
 ## 🏗️ Architecture
 
@@ -9,7 +9,7 @@ This project provides infrastructure as code (IaC) to deploy microservices appli
 - **Application Load Balancer**: Load balancing and health checks
 - **VPC Endpoints**: Private connectivity to AWS services (ECR, Secrets Manager, S3, CloudWatch)
 - **RDS MySQL**: Managed database with encryption
-- **ElastiCache Redis**: In-memory caching (optional)
+
 - **AWS WAF**: Web application firewall
 - **Security Monitoring**: GuardDuty, VPC Flow Logs, SNS alerts
 - **Secrets Manager**: Secure credentials management
@@ -33,7 +33,6 @@ Terraform/
 │   │   ├── security/           # Security groups
 │   │   ├── vpc/                # VPC, subnets (no NAT Gateway)
 │   │   ├── waf/                # AWS WAF protection
-│   │   ├── elasticache/        # ElastiCache Redis (optional)
 │   │   ├── secrets/            # Secrets Manager
 │   │   └── security-monitoring/ # GuardDuty, VPC Flow Logs
 │   ├── main.tf                 # Main configuration
@@ -95,7 +94,6 @@ enable_rds = true
 enable_secrets_manager = true
 
 # Optional features
-enable_elasticache = false
 enable_waf = true
 ```
 
@@ -152,9 +150,6 @@ docker push YOUR_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/your-repo:lates
 enable_rds = true
 enable_secrets_manager = true
 
-# Caching
-enable_elasticache = false
-
 # Security
 enable_waf = true
 enable_guardduty = true
@@ -174,7 +169,7 @@ target_memory_utilization = 80
 ## 🔒 Security
 
 - **VPC Endpoints**: Private connectivity, no internet access for containers
-- **Encryption**: RDS and ElastiCache are encrypted
+- **Encryption**: RDS is encrypted
 - **Secrets Manager**: Secure credential management
 - **WAF**: Protection against web attacks
 - **GuardDuty**: Threat detection
